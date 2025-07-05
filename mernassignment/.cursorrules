@@ -1,0 +1,272 @@
+# Real-Time Collaborative To-Do Board - Production Standards
+
+## Project Overview
+This is a full-stack MERN application featuring real-time collaborative task management with WebSocket integration, JWT authentication, and advanced conflict resolution. The application must meet enterprise-level code quality and security standards.
+
+## Tech Stack Requirements
+- **Frontend**: React 18+ with TypeScript, custom CSS (no frameworks)
+- **Backend**: Node.js 18+, Express.js, MongoDB with Mongoose
+- **Real-time**: Socket.IO for WebSocket communication
+- **Authentication**: JWT with bcrypt password hashing
+- **Testing**: Jest for unit tests, Supertest for API testing
+- **Deployment**: Frontend on Vercel/Netlify, Backend on Render/Railway
+
+## Code Quality Standards
+
+### TypeScript Configuration
+- Use strict TypeScript mode with explicit types
+- No `any` types allowed - use proper interfaces and types
+- All API responses must have defined interfaces
+- Use generic types for reusable components and functions
+
+### Naming Conventions
+- **Variables/Functions**: camelCase (e.g., `getUserTasks`, `isTaskValid`)
+- **Components**: PascalCase (e.g., `TaskCard`, `KanbanBoard`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `API_ENDPOINTS`, `TASK_STATUS`)
+- **Files**: kebab-case for components (e.g., `task-card.tsx`, `kanban-board.tsx`)
+- **Database Models**: PascalCase (e.g., `User`, `Task`, `ActionLog`)
+
+### File Structure Requirements
+```
+src/
+├── components/
+│   ├── auth/
+│   ├── kanban/
+│   ├── common/
+│   └── layout/
+├── hooks/
+├── services/
+│   ├── api/
+│   ├── socket/
+│   └── auth/
+├── types/
+├── utils/
+├── constants/
+└── styles/
+```
+
+## Security Standards
+
+### Authentication & Authorization
+- Always validate JWT tokens on protected routes
+- Hash passwords with bcrypt (minimum 12 rounds)
+- Implement rate limiting for login attempts
+- Never expose sensitive data in API responses
+- Use environment variables for all secrets
+
+### Input Validation
+- Validate all user inputs on both client and server
+- Sanitize data before database operations
+- Use Joi or Yup for schema validation
+- Implement CORS properly for production
+
+### Error Handling
+- Never expose internal error details to clients
+- Use custom error classes with proper HTTP status codes
+- Log all errors with context for debugging
+- Implement graceful error boundaries in React
+
+## Database Standards
+
+### MongoDB/Mongoose Patterns
+- Use proper schema validation with Mongoose
+- Implement indexes for frequently queried fields
+- Use transactions for multi-document operations
+- Always handle connection errors gracefully
+
+### Data Modeling
+```
+// Example Task Schema Structure
+const taskSchema = {
+  title: { type: String, required: true, unique: true },
+  description: String,
+  assignedUser: { type: ObjectId, ref: 'User' },
+  status: { type: String, enum: ['Todo', 'In Progress', 'Done'] },
+  priority: { type: String, enum: ['Low', 'Medium', 'High'] },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+  lastEditedBy: { type: ObjectId, ref: 'User' },
+  version: { type: Number, default: 1 } // For conflict resolution
+}
+```
+
+## Real-Time Communication Standards
+
+### Socket.IO Implementation
+- Use namespaces for different features
+- Implement proper room management for boards
+- Handle connection/disconnection gracefully
+- Emit events with consistent payload structure
+- Implement authentication middleware for socket connections
+
+### Event Naming Convention
+```
+// Client to Server events
+'task:create', 'task:update', 'task:delete', 'task:move'
+'user:join-board', 'user:leave-board'
+
+// Server to Client events
+'task:created', 'task:updated', 'task:deleted', 'task:moved'
+'user:joined', 'user:left', 'conflict:detected'
+```
+
+## React Component Standards
+
+### Component Structure
+- Use functional components with hooks only
+- Implement proper prop validation with TypeScript interfaces
+- Use custom hooks for complex logic
+- Implement proper loading and error states
+- Use React.memo for performance optimization where needed
+
+### State Management
+- Use React Context for global state (user, socket connection)
+- Use useState and useReducer for local component state
+- Implement proper cleanup in useEffect hooks
+- Use custom hooks for API calls and socket events
+
+### CSS Standards
+- Use CSS Modules or styled-components for component styling
+- Implement mobile-first responsive design
+- Use CSS custom properties for theming
+- Follow BEM methodology for class naming
+- Implement smooth animations with CSS transitions
+
+## API Design Standards
+
+### REST API Conventions
+```
+// Endpoint naming
+GET    /api/tasks              // Get all tasks
+POST   /api/tasks              // Create task
+PUT    /api/tasks/:id          // Update task
+DELETE /api/tasks/:id          // Delete task
+GET    /api/actions            // Get action logs
+POST   /api/auth/login         // User login
+POST   /api/auth/register      // User registration
+```
+
+### Response Format
+```
+// Success Response
+{
+  success: true,
+  data: {...},
+  message: "Operation completed successfully"
+}
+
+// Error Response
+{
+  success: false,
+  error: {
+    code: "VALIDATION_ERROR",
+    message: "Task title must be unique",
+    details: {...}
+  }
+}
+```
+
+## Business Logic Implementation
+
+### Smart Assign Algorithm
+- Query active tasks count for each user
+- Select user with minimum active tasks
+- Handle edge cases (no users, equal task counts)
+- Log the assignment action
+
+### Conflict Resolution
+- Implement optimistic locking with version numbers
+- Detect conflicts by comparing versions
+- Store both versions for user comparison
+- Provide merge and overwrite options
+
+### Action Logging
+- Log every CRUD operation with user context
+- Include timestamp, user ID, action type, and affected resource
+- Implement efficient querying for last 20 actions
+- Use proper indexing for performance
+
+## Testing Requirements
+
+### Unit Testing
+- Test all utility functions and business logic
+- Mock external dependencies (database, APIs)
+- Achieve minimum 80% code coverage
+- Use descriptive test names and proper assertions
+
+### Integration Testing
+- Test API endpoints with proper authentication
+- Test socket events and real-time functionality
+- Test database operations with test database
+- Test conflict resolution scenarios
+
+## Performance Standards
+
+### Frontend Optimization
+- Implement code splitting for routes
+- Use React.lazy for component lazy loading
+- Optimize re-renders with proper dependency arrays
+- Implement virtual scrolling for large lists
+
+### Backend Optimization
+- Use database indexes for frequently queried fields
+- Implement caching for static data
+- Use connection pooling for database connections
+- Implement proper pagination for large datasets
+
+## Deployment Standards
+
+### Environment Configuration
+- Use separate configs for development, staging, production
+- Never commit sensitive environment variables
+- Use proper CORS configuration for production
+- Implement health check endpoints
+
+### Production Readiness
+- Use PM2 or similar for process management
+- Implement proper logging with log levels
+- Use HTTPS in production
+- Implement proper backup strategies
+
+## Git Standards
+
+### Commit Messages
+```
+feat(auth): implement JWT token refresh mechanism
+fix(socket): resolve connection timeout issues
+refactor(api): optimize task query performance
+docs(readme): add deployment instructions
+```
+
+### Branch Strategy
+- Use feature branches for new features
+- Implement proper code review process
+- Use semantic versioning for releases
+- Maintain clean commit history
+
+## Documentation Requirements
+- Add JSDoc comments for all exported functions
+- Document API endpoints with examples
+- Include setup instructions in README
+- Document business logic decisions
+- Create user guide for application features
+```
+
+## **Additional Professional Guidelines**
+
+**Code Review Checklist:**
+- Security vulnerabilities addressed
+- Performance implications considered
+- Error handling implemented
+- Tests written and passing
+- Documentation updated
+- Mobile responsiveness verified
+
+**Pre-deployment Checklist:**
+- Environment variables configured
+- Database migrations applied
+- SSL certificates installed
+- Monitoring and logging configured
+- Backup procedures tested
+
+</rewritten_file> 
