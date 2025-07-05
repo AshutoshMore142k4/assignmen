@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "description": "Real-Time Collaborative To-Do Board with MERN Stack",
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
   "scripts": {
     "dev:frontend": "cd frontend && npm run dev",
     "dev:backend": "cd backend && npm run dev",

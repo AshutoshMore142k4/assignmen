@@ -1,9 +1,9 @@
 {
-  "buildCommand": "npm run build:frontend",
+  "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
   "framework": "vite",
-  "installCommand": "npm run install:all",
-  "devCommand": "npm run dev:frontend",
+  "installCommand": "echo 'Skipping root install'",
+  "devCommand": "cd frontend && npm run dev",
   "rewrites": [
     {
       "source": "/api/(.*)",
