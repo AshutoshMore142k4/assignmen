@@ -2,11 +2,12 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "dist/index.js",
+  "type": "commonjs",
 
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "start": "node dist/index.js",
-    "build": "tsc",
+    "build": "node build.js",
     "test": "jest --coverage"
   },
   "dependencies": {
